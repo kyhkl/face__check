@@ -6,7 +6,7 @@
 	系统上电要读取xml配置文件，进行mqtt ip 和 主题的设置，同时还要设置
 	摄像机的ip，然后按照预定json格式，发回给后台。
 
-三、涉及的内容有 cjson  xml mqtt c++ tcp-ip 线程间通讯 语音模块 
+三、涉及的内容有 cjson  xml mqtt c tcp-ip 线程间通讯 语音模块 
 
 四、既定日期2019.4.1  ---  2019.4.15 
 
@@ -19,14 +19,14 @@
 
 六、文件夹结构
 
-	MAIN_DIR --->     ext   src  inc  conf Makefile readme git.git
+	MAIN_DIR --->       ext   src  inc  conf Makefile readme git.git
                      /   \
-	SUB_DIR  --->  lib   inc
+	SUB_DIR  --->    lib   inc
 
 七、文件结构说明 
 	ext 文件夹下包含 lib和inc  主要是存放外部动态库静态库和头文件，同时ext文
 	件夹还存放外部的引用的c文件等；
-	src 主要是项目的源码C/C++ 文件；
+	src 主要是项目的源码C 文件；
 	inc 主要是项目的头文件；
 	conf是项目需要用到的配置文件；
 	Makefile  项目管理文件；
