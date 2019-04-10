@@ -19,7 +19,7 @@
 
 六、文件夹结构
 
-	MAIN_DIR --->       ext   src  inc  conf Makefile readme git.git
+	MAIN_DIR --->       ext   src  inc  conf Makefile readme lib_example git.git
                      /   \
 	SUB_DIR  --->    lib   inc
 
@@ -28,6 +28,7 @@
 	件夹还存放外部的引用的c文件等；
 	src 主要是项目的源码C 文件；
 	inc 主要是项目的头文件；
+	lib_example 是项目用到的库测试文件
 	conf是项目需要用到的配置文件；
 	Makefile  项目管理文件；
 	readme  项目说明文件 ；

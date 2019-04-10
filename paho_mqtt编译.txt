@@ -1,0 +1,63 @@
+交叉编译
+因为这个有OpenSSL库的依赖，所以先要交叉编译OpenSSL。
+
+unzip paho.mqtt.c-master
+cd paho.mqtt.c-master
+修改Makefile。在129行添加openssl的链接目录，注意改成你自己的路径。
+
+...
+#****************************************************
+#增加的openssl 库路径
+OPENSSL_DIR=/usr/local/activemq_arm/openssl
+
+CFLAGS += -I ${OPENSSL_DIR}/include
+LDFLAGS += -L ${OPENSSL_DIR}/lib -lrt 
+#*****************************************************
+
+修改完成之后，执行如下命令：
+
+make CC=arm-none-linux-gnueabi-gcc
+make CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ CFLAGS="-I/usr/local/activemq_arm/openssl/include"  LDFLAGS="-L /usr/local/activemq_arm/openssl/lib -lrt"
+这样会在当前目录创建build目录，进入build目录，你能看到output目录和一个版本头文件，进入output，你能看到库文件，examples和测试程序。
+
+头文件去src目录找。
+
+为什么不执行make install呢？要执行make install还得修改Makefile文件，不然会出错的。才疏学浅，我还是本办法手动去拿这些库和头文件算了。
+
+四个库文件在README里面有介绍：
+
+The Paho C client comprises four shared libraries:
+
+libmqttv3a.so - asynchronous
+libmqttv3as.so - asynchronous with SSL
+libmqttv3c.so - "classic" / synchronous
+libmqttv3cs.so - "classic" / synchronous with SSL
+
+
+
+编译arm平台的
+make clean
+make WITH_SRV=no CC=arm-linux-gcc CXX=arm-linux-g++
+需要
+./lib/libmosquitto.so.1
+./client/mosquitto_sub拷贝到开发板上
+(这种方式编译还需要libssl， libcrypto库,请自行拷贝)
+//正常编译
+make WITH_SRV=no WITH_UUID=no WITH_DOCS=no  WITH_TLS=no CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ LDFLAGS+=-lrt  
+make WITH_SRV=no WITH_UUID=no WITH_DOCS=no  WITH_TLS=no CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ LDFLAGS+=-lrt  install
+
+如果要指定ssl的库位置
+make WITH_SRV=no WITH_UUID=no WITH_DOCS=no  CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ CFLAGS="-I/usr/local/activemq_arm/openssl/include"  LDFLAGS="-L /usr/local/activemq_arm/openssl/lib -lrt"
+
+#****************************************************
+#增加的openssl 库路径
+OPENSSL_DIR=/usr/local/activemq_arm/openssl
+
+CFLAGS += -I ${OPENSSL_DIR}/include
+LDFLAGS += -L ${OPENSSL_DIR}/lib -lrt 
+#*****************************************************
+
+在开发板上运行,订阅hello
+mosquitto_sub -v -t hello -h  192.168.0.108
+
+

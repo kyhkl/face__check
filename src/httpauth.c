@@ -1,5 +1,6 @@
-#include "httpauth.h"
- 
+#include "config.h"
+
+
 // Constants are the integer part of the sines of integers (in radians) * 2^32.
 const uint32_t k[64] = {
 	0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee ,
@@ -26,14 +27,11 @@ const uint32_t r[] = {
 	4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
 	6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
 	};
- 
- 
 // leftrotate function definition
 #define LEFTROTATE(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
- 
- 
 
- 
+
+
 void to_bytes(uint32_t val, uint8_t *bytes)
 {
 	bytes[0] = (uint8_t) val;
@@ -69,7 +67,7 @@ void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
 										 
 	//Pre-processing:
 	//append "1" bit to message    
-	//append "0" bits until message length in bits � 448 (mod 512)
+	//append "0" bits until message length in bits ? 448 (mod 512)
 	//append length mod (2^64) to message
 										 
 	for (new_len = initial_len + 1; new_len % (512/8) != 448/8; new_len++)
@@ -89,7 +87,7 @@ void md5(const uint8_t *initial_msg, size_t initial_len, uint8_t *digest) {
 	// Process the message in successive 512-bit chunks:
 	//for each 512-bit chunk of message:
 	for(offset=0; offset<new_len; offset += (512/8)) {
-		// break chunk into sixteen 32-bit words w[j], 0 � j � 15
+		// break chunk into sixteen 32-bit words w[j], 0 ? j ? 15
 		for (i = 0; i < 16; i++)
 			w[i] = to_int32(msg + offset + i*4);
 
@@ -154,7 +152,7 @@ void to_hex(char *in,int len,unsigned char *out)
 	}
 }
 
-int httpauth_set_auth(httpauth_t *auth,const char* username,const char* password,const char* realm,const char* nonce,const char* nc,const char* cnonce,const char* response,const char* qop)
+int  httpauth_set_auth(httpauth_t *auth,const char* username,const char* password,const char* realm,const char* nonce,const char* nc,const char* cnonce,const char* response,const char* qop)
 {
 	strcpy(auth->username,username);
 	strcpy(auth->password,password);
@@ -197,10 +195,6 @@ int httpauth_get_response(httpauth_t *auth,char *cmd,char *url)
 	md5(strH1, len, result);
 	to_hex(result,16,auth->response);
 //	printf("response = %s\r\n",auth->response);
-
-
-
-
 	return 0;
 }
 
@@ -210,8 +204,7 @@ int httpauth_get_response(httpauth_t *auth,char *cmd,char *url)
 void request(int socket_fd,httpauth_t *auth,int flag)
 {
 	char buf[2048];
-	int  pos = 0;
-
+	int pos = 0;
 	pos = sprintf(&buf[pos], "GET /ISAPI/Streaming/channels/101/picture HTTP/1.1\r\n");
 	pos += sprintf(&buf[pos], "Host:192.168.3.64\r\n");
 	pos += sprintf(&buf[pos], "Connection: keep-alive\r\n");
@@ -226,7 +219,7 @@ void request(int socket_fd,httpauth_t *auth,int flag)
     pos += sprintf(&buf[pos], "Accept-Encoding: gzip, deflate, sdch\r\n");
     pos += sprintf(&buf[pos], "Accept-Language: zh-CN,zh;q=0.8\r\n");
     pos += sprintf(&buf[pos], "\r\n");
-    printf("%s\r\n",buf);
+   // printf("%s\r\n",buf);
     send(socket_fd, buf, strlen(buf), 0);
 	
 }
@@ -238,9 +231,8 @@ int prase_response(char * response_buf )
 int prase_response(char * response_buf ,httpauth_t *auth)
 {
 	char * begin=NULL , *end=NULL;
-	if(strstr(response_buf,"401")!=NULL)
-	{	
-		printf("the servers return 401 \r\n");
+	
+		
 		if(strstr(response_buf,"401")!=NULL)
 		{
 			begin = strstr(response_buf,"\"");
@@ -255,16 +247,10 @@ int prase_response(char * response_buf ,httpauth_t *auth)
 			end   =	strstr(begin+1,"\"");
 			memcpy(auth->nonce,begin+1,end-begin-1);
             memcpy(auth->cnonce,auth->nonce,16);
+            printf("the servers return 401 \r\n");
+            return 401;
 		}
-//		printf("qop:%s\r\n"  ,auth->qop);
-//		printf("realm:%s\r\n",auth->realm);
-//		printf("nonce:%s\r\n",auth->nonce);
-	}
-	else if(strstr(response_buf,"200")!=NULL)
-		printf("the servers return 200 ok\r\n");
-		
-	return 0 ;
-	
+        else if(strstr(response_buf,"200")!=NULL)
+		printf("the servers return 200 ok\r\n");		
+        return 0 ;	
 }
-
-

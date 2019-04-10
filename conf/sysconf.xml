@@ -1,0 +1,164 @@
+<?xml version="1.0" ?>
+<BY-LD08>
+    <system-terminal id="1" location="BY-LD08" desc="boyuan vmis xxx" version="1.0" dev_type="0" />
+    <system-admin user="root" password="202cb962ac59075b964b07152d234b70" report_mode="0" baddot_rate="30" />
+    <system-network ip="190.192.18.185" ip_mask="255.255.255.0" gateway="190.192.18.254" mac="7D:32:E9:A8:9F:B5" remote_ip="192.168.1.24" remote_port="5000" server_port="5000" timeout="3600" ip-mask="255.255.255.0" ntp_ip="190.192.1.195" />
+    <hypervelocity id="capture" speed="80" speed_pass_rate="20" distance="601" retardation_offset="0" />
+    <ftp server_ip="192.168.1.188" port="6666" user="boyuan12" password="123" savepath="/home/ky/" enable="1" />
+    <system-path playlist_path="/opt/playfile" />
+    <equipment>
+        <Provider>01</Provider>
+        <EquipType>101</EquipType>
+        <EquipID>eq101000000000x</EquipID>
+        <EquipName>香梅路莲花路智能机柜</EquipName>
+        <!-- AC220 or dc48 -->
+        <valtageType>AC220</valtageType>
+    </equipment>
+    <syscong>
+        <serial>
+            <!-- 串口配置-->
+            <dtu-e>
+                <DataBits>8</DataBits>
+                <Parity>n</Parity>
+                <StopBits>1</StopBits>
+                <PortNum>1</PortNum>
+                <BaudRate>9600</BaudRate>
+            </dtu-e>
+            <mzr_aj12>
+                <!-- Available ports is 1,3,4,5 -->
+                <DataBits>8</DataBits>
+                <Parity>n</Parity>
+                <StopBits>1</StopBits>
+                <PortNum>4</PortNum>
+                <BaudRate>9600</BaudRate>
+            </mzr_aj12>
+            <ups_bms>
+                <DataBits>8</DataBits>
+                <Parity>n</Parity>
+                <StopBits>1</StopBits>
+                <PortNum>3</PortNum>
+                <BaudRate>9600</BaudRate>
+            </ups_bms>
+            <door>
+                <DataBits>8</DataBits>
+                <Parity>n</Parity>
+                <StopBits>1</StopBits>
+                <PortNum>5</PortNum>
+                <BaudRate>9600</BaudRate>
+            </door>
+            <air_cond>
+                <DataBits>8</DataBits>
+                <Parity>n</Parity>
+                <StopBits>1</StopBits>
+                <PortNum>2</PortNum>
+                <BaudRate>9600</BaudRate>
+            </air_cond>
+        </serial>
+        <cur_des_48v>
+            <cur_one_des>辅助信号</cur_one_des>
+            <cur_two_des>网络设备</cur_two_des>
+            <cur_three_des>主控设备</cur_three_des>
+            <cur_four_des>空调设备</cur_four_des>
+            <cur_five_des>环型屏</cur_five_des>
+            <cur_six_des>灯杆条屏</cur_six_des>
+            <cur_seven_des>电警主机</cur_seven_des>
+            <cur_eight_des>北方向电警杆</cur_eight_des>
+            <cur_nine_des>西方向电警杆</cur_nine_des>
+            <cur_ten_des>东方向电警杆</cur_ten_des>
+            <cur_eleven_des>治安</cur_eleven_des>
+            <cur_twelve_des>信号机</cur_twelve_des>
+        </cur_des_48v>
+        <cur_des_220V>
+            <cur_one_des>未使用</cur_one_des>
+            <cur_two_des>发电机</cur_two_des>
+            <cur_three_des>人脸识别</cur_three_des>
+            <cur_four_des>CCTV</cur_four_des>
+            <cur_five_des>高清电警</cur_five_des>
+            <cur_six_des>信号机</cur_six_des>
+            <cur_seven_des>网络设备</cur_seven_des>
+            <cur_eight_des>治安监控</cur_eight_des>
+            <cur_nine_des>控制单元</cur_nine_des>
+            <cur_ten_des>市电A主</cur_ten_des>
+            <cur_eleven_des>市电B备</cur_eleven_des>
+            <cur_twelve_des>UPS输入</cur_twelve_des>
+        </cur_des_220V>
+        <area_des>
+            <area1_des>电源区</area1_des>
+            <area2_des>电池区</area2_des>
+            <area3_des>信号机区</area3_des>
+            <area4_des>环形屏区</area4_des>
+        </area_des>
+        <mqtt_conf>
+            <brokerURI>tcp://192.168.3.88:1883</brokerURI>
+            <useAuth>false</useAuth>
+            <password>admin</password>
+            <username>admin</username>
+            <sub_topic>command_sub</sub_topic>
+            <sub_qos>2</sub_qos>
+            <pub_topic>command_pub</pub_topic>
+            <pub_qos>2</pub_qos>
+            <will_topic>LAST_WORDS_TOPIC</will_topic>
+            <will_retained>0</will_retained>
+            <will_qos>2</will_qos>
+            <!--will_state 字符串 4 断线 -->
+            <will_state>4</will_state>
+        </mqtt_conf>
+        <door_conf>
+            <!-- 10长度密码 -->
+            <passwd>0000000000</passwd>
+            <ipaddr>192.168.0.178</ipaddr>
+            <ipport>4001</ipport>
+        </door_conf>
+        <activemq_xml>
+            <time_out>10000</time_out>
+            <brokerURI>tcp://190.204.20.26:61616?soConnectTimeout=10000</brokerURI>
+            <topic>faultRepQueue</topic>
+            <!-- false or true 此处由于web配置CGI程序问题 false 应为flase -->
+            <useTopics>flase</useTopics>
+            <password>admin</password>
+            <username>admin</username>
+        </activemq_xml>
+        <activemq_json>
+            <time_out>10000</time_out>
+            <brokerURI>tcp://190.204.20.26:61616?soConnectTimeout=10000</brokerURI>
+            <topic>terminalEquipmentQueue</topic>
+            <useTopics>flase</useTopics>
+            <password>admin</password>
+            <username>admin</username>
+        </activemq_json>
+        <soundWarning>
+            <!-- on  off  auto  -->
+            <enable>on</enable>
+        </soundWarning>
+        <adlamp>
+            <start_hour>18</start_hour>
+            <start_minute>00</start_minute>
+            <end_hour>8</end_hour>
+            <end_minute>00</end_minute>
+            <!-- on  off  auto  -->
+            <enable>on</enable>
+        </adlamp>
+        <flashlamp>
+            <start_hour>18</start_hour>
+            <start_minute>00</start_minute>
+            <end_hour>8</end_hour>
+            <end_minute>00</end_minute>
+            <!-- on  off  auto  -->
+            <enable>on</enable>
+        </flashlamp>
+        <connectionStrings>
+            <add name="SMSSQL" connectionString="Data Source=192.168.0.8;Initial Catalog=SMS;User ID=sa;Password=sa" providerName="System.Data.SqlClient" />
+        </connectionStrings>
+    </syscong>
+    <doorID>
+        <door1>1</door1>
+        <door2>2</door2>
+        <door3>3</door3>
+        <door4>4</door4>
+        <door5>5</door5>
+        <door6>6</door6>
+        <door7>7</door7>
+        <door8>8</door8>
+        <door9>9</door9>
+    </doorID>
+</BY-LD08>
