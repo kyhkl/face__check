@@ -39,7 +39,7 @@ void connet_camera(const char * ip)//与摄像头建立socket 连接
 				printf("连接服务器失败\r\n");
 				return ;
 			}
-			printf("连接服务器成功\r\n");
+			//printf("连接服务器成功\r\n");
 }
 
 int first_request(httpauth_t * auth ,char * rcv_buf )//第一次请求发送带header或者不带header都行
@@ -49,7 +49,7 @@ int first_request(httpauth_t * auth ,char * rcv_buf )//第一次请求发送带h
 			httpauth_set_auth(auth,username_t,passworld_t,realm_t,nonce_t,nc_t,cnonce_t,response_t,qop_t);
 			request(sd,auth,0);
 			ret = recv(sd,rcv_buf,1024,0);
-            printf("%s",rcv_buf);
+            //printf("%s",rcv_buf);
 			if(ret < 0)
 			{
 				printf("first recvice is ret == -1\r\n");
@@ -130,29 +130,31 @@ int capture_thread1 ()
 	int num;
 	INPUT_EVENT event;
     
-    FILE* fp = fopen("test.xml","r");
+    FILE* fp = fopen("./conf/sysconf.xml","r");
     // jiazai xml
     mxml_node_t* xml = mxmlLoadFile(NULL,fp,MXML_NO_CALLBACK);
+    mxml_node_t* xml_t = NULL;
     mxml_node_t* mqtt_ip = NULL;
     mxml_node_t* mqtt_topic = NULL;
     mxml_node_t* mqtt_usr_name = NULL;
     mxml_node_t* mqtt_usr_passwd = NULL;
     mxml_node_t* camera_ip = NULL;
     mxml_node_t* address_name = NULL;
- 
-    mqtt_ip = mxmlFindElement(xml,xml,"mqtt_ip",NULL,NULL,MXML_DESCEND);
-    mqtt_topic = mxmlFindElement(xml,xml,"mqtt_topic",NULL,NULL,MXML_DESCEND);
-    mqtt_usr_name = mxmlFindElement(xml,xml,"mqtt_usr_name",NULL,NULL,MXML_DESCEND);
-    mqtt_usr_passwd = mxmlFindElement(xml,xml,"mqtt_usr_passwd",NULL,NULL,MXML_DESCEND);
-    camera_ip = mxmlFindElement(xml,xml,"camera_ip",NULL,NULL,MXML_DESCEND);
-    address_name = mxmlFindElement(xml,xml,"address_name",NULL,NULL,MXML_DESCEND);
     
-    config_info.address_name=mxmlGetText(address_name,NULL);
-    config_info.camera_ip=mxmlGetText(camera_ip,NULL);
-    config_info.mqtt_ip=mxmlGetText(mqtt_ip,NULL);
-    config_info.mqtt_topic=mxmlGetText(mqtt_topic,NULL);
-    config_info.mqtt_usr_name=mxmlGetText(mqtt_usr_name,NULL);
-    config_info.mqtt_usr_passwd=mxmlGetText(mqtt_usr_passwd,NULL);
+    xml_t = mxmlFindElement(xml,xml,"face_check",NULL,NULL,MXML_DESCEND);
+    mqtt_ip = mxmlFindElement(xml_t,xml,"mqtt_ip",NULL,NULL,MXML_DESCEND);
+    mqtt_topic = mxmlFindElement(xml_t,xml,"mqtt_topic",NULL,NULL,MXML_DESCEND);
+    mqtt_usr_name = mxmlFindElement(xml_t,xml,"mqtt_usr_name",NULL,NULL,MXML_DESCEND);
+    mqtt_usr_passwd = mxmlFindElement(xml_t,xml,"mqtt_usr_passwd",NULL,NULL,MXML_DESCEND);
+    camera_ip = mxmlFindElement(xml_t,xml,"camera_ip",NULL,NULL,MXML_DESCEND);
+    address_name = mxmlFindElement(xml_t,xml,"address_name",NULL,NULL,MXML_DESCEND);
+    
+    memset(config_info.address_name,mxmlGetText(address_name,NULL),sizeof(config_info.address_name));
+     memset(config_info.camera_ip,mxmlGetText(camera_ip,NULL),sizeof(config_info.camera_ip));;
+     memset(config_info.mqtt_ip,mxmlGetText(mqtt_ip,NULL),sizeof(config_info.mqtt_ip));;
+     memset(config_info.mqtt_topic,mxmlGetText(mqtt_topic,NULL),sizeof(config_info.mqtt_topic));;
+     memset(config_info.mqtt_usr_name,mxmlGetText(mqtt_usr_name,NULL),sizeof(config_info.mqtt_usr_name));;
+     memset(config_info.mqtt_usr_passwd,mxmlGetText(mqtt_usr_passwd,NULL),sizeof(config_info.mqtt_usr_passwd));;
     
     mxmlDelete(xml);
     fclose(fp);
@@ -178,7 +180,7 @@ int capture_thread1 ()
 		if(event.type == EV_KEY)
 		{	
 			// keybutton status
-			if(event.value)&&(event.code == 103)
+			if((event.value)&&(event.code == 103))
 			{
 				sys_info.key_event = 1;
                 //printf("    press down\n");						
@@ -188,13 +190,14 @@ int capture_thread1 ()
 				//printf("    press up\n");
 			}
 		}
-            capture_thread1();
-	}
-    if(sys_info.key_event)
-    {
+         if(sys_info.key_event)
+        {
             capture_pic();
             sys_info.key_event = 0;
-    }
+        }
+            
+	}
+   
 }
 
 
