@@ -14,16 +14,20 @@
  * Contributors:
  *    Ian Craggs - initial contribution
  *******************************************************************************/
+#include <time.h>
 #include "MQTTClient.h"
 #include "config.h"
 #include "cJSON.h"
 #define ADDRESS     "tcp://m2m.eclipse.org:1883"
-#define CLIENTID    "ExampleClientPub"
-#define TOPIC       "MQTT Examples"
-#define PAYLOAD     "Hello World!"
+//#define ADDRESS     "192.168.3.88:1883"
+#define ADDRESS     "193.112.87.125:1883"
+#define CLIENTID    "by_smart_cabinet"
+#define TOPIC       "INSPECT_TOPIC"
+#define PAYLOAD     "by_smart_test !"
 #define QOS         1
-#define TIMEOUT     10000L
-
+#define TIMEOUT     100000L
+#define USERNAME   "admin"
+#define PASSWORD   "admin"
 /*
 #define ADDRESS     "tcp://m2m.eclipse.org:1883"
 #define CLIENTID    "ExampleClientPub123"
@@ -32,15 +36,21 @@
 #define QOS         1
 #define TIMEOUT     10000L
 */
-char * json_str;
+char  * json_str=NULL;
 cJSON * root;
 void pack_to_json(void)
 {
+
+   // char *time_buf;
+   
+  //  struct tm time_info;
+    //sprintf(time_buf,"%s-%s-%s  %s:%s:%s",time_info.tm_hour,time_info.tm_hour,time_info.tm_hour,time_info.tm_hour,time_info.tm_hour,time_info.tm_hour);
     root =  cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "CardNumber", cJSON_CreateString("10001001"));//根节点下添加
-    cJSON_AddItemToObject(root, "Time", cJSON_CreateString("2019-4-8 14:10:50"));
-    cJSON_AddItemToObject(root, "Position", cJSON_CreateString("莲花路彩田路路口"));
-    cJSON_AddItemToObject(root, "jpeg", cJSON_CreateString(json_jpeg));
+    cJSON_AddItemToObject(root, "EquipID", cJSON_CreateString("eq101000000000x"));
+    cJSON_AddItemToObject(root, "Time", cJSON_CreateString("2019-4-12 15:15:06"));
+    cJSON_AddItemToObject(root, "Position", cJSON_CreateString("香梅路莲花路智能机柜"));
+    cJSON_AddItemToObject(root, "sign", cJSON_CreateString("inspect"));
+   // cJSON_AddItemToObject(root, "jpeg", cJSON_CreateString(json_jpeg));
     json_str=cJSON_Print(root);
     //printf("%s\n", cJSON_Print(root));
 }
@@ -53,43 +63,48 @@ int mqtt_thread2(void)
     MQTTClient_deliveryToken token;
     int rc;
 
-    MQTTClient_create(&client, ADDRESS, CLIENTID,
-        MQTTCLIENT_PERSISTENCE_NONE, NULL);
-    conn_opts.keepAliveInterval = 20;
-    conn_opts.cleansession = 1;
-
-    if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
-    {
-        printf("Failed to connect, return code %d\n", rc);
-        exit(EXIT_FAILURE);
-    }
-    pubmsg.payload = PAYLOAD;
-    pubmsg.payloadlen = (int)strlen(PAYLOAD);
-    pubmsg.qos = QOS;
-    pubmsg.retained = 0;
-
-    while(1)
+        MQTTClient_create(&client, ADDRESS, CLIENTID , MQTTCLIENT_PERSISTENCE_NONE, NULL);
+        conn_opts.keepAliveInterval = 200;
+        conn_opts.cleansession = 1;
+        conn_opts.username = USERNAME;
+        conn_opts.password= PASSWORD;
+while(1)
     {
         if(sem)
         {
             sem = 0;
-           // pubmsg.payload =  json_str;
-       
-            MQTTClient_publishMessage(client, TOPIC, &pubmsg, &token);
-   
+            
+            if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
+            {
+                printf("Failed to connect, return code %d\n", rc);
+                exit(EXIT_FAILURE);
+            }
+            pubmsg.payload = PAYLOAD;
+            pubmsg.payloadlen = 160*1024;
+            pubmsg.qos = QOS;
+            pubmsg.retained = 0;
+            
+            pack_to_json();
+            pubmsg.payload =  json_str;
+            pubmsg.payloadlen = (int)strlen(json_str);
+            printf("payloadlen is %d\r\n",pubmsg.payloadlen);
+            rc=MQTTClient_publishMessage(client, TOPIC, &pubmsg, &token);
+            if(rc == 0)
+            printf("MQTTClient_publishMessage sucessfully\r\n");
             printf("Waiting for up to %d seconds for publication of %s\n"
                     "on topic %s for client with ClientID: %s\n",
                     (int)(TIMEOUT/1000), PAYLOAD, TOPIC, CLIENTID);
             rc = MQTTClient_waitForCompletion(client, token, TIMEOUT);
+            if(rc == 0)
             printf("Message with delivery token %d delivered\n", token);
-          
+            else
+            printf("delivery error return %d\r\n",rc);
+            //MQTTClient_unsubscribe(client, TOPIC);
+            MQTTClient_disconnect(client, 10000);
         }
         usleep(300000);
     }
-    MQTTClient_disconnect(client, 10000);
+   // MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);
     return rc;
-    
-   
-    
 }
