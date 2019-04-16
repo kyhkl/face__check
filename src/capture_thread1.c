@@ -120,7 +120,7 @@ void connet_camera(const char * ip)//与摄像头建立socket 连接
 		   //设置sockaddr_in结构体中相关参数
 			ser_sockaddr.sin_family =  AF_INET;          //地址族 IPV4
 			ser_sockaddr.sin_port   =  htons(80);  //设置为要连接的服务器的端口号(short数据转化为网络数据)
-			ser_sockaddr.sin_addr.s_addr  = inet_addr("192.168.3.64"); //设置服务器的IP地址(字符串转化为整形)
+			ser_sockaddr.sin_addr.s_addr  = inet_addr(config_info.camera_ip); //设置服务器的IP地址(字符串转化为整形)
 			ret = connect(sd, (struct sockaddr *)&ser_sockaddr, sizeof(ser_sockaddr));//连接服务器
 			if(ret==-1)
 			{
@@ -237,7 +237,8 @@ int capture_thread1 (void)
     int fd;
 	int num;
 	INPUT_EVENT event;
-    
+   
+  
     FILE* fp = fopen("./conf/sysconf.xml","r");
     // jiazai xml
     mxml_node_t* xml = mxmlLoadFile(NULL,fp,MXML_NO_CALLBACK);
@@ -248,6 +249,7 @@ int capture_thread1 (void)
     mxml_node_t* mqtt_usr_passwd = NULL;
     mxml_node_t* camera_ip = NULL;
     mxml_node_t* address_name = NULL;
+    mxml_node_t* equip_id = NULL;
     
     xml_t = mxmlFindElement(xml,xml,"face_check",NULL,NULL,MXML_DESCEND);
     mqtt_ip = mxmlFindElement(xml_t,xml,"mqtt_ip",NULL,NULL,MXML_DESCEND);
@@ -255,18 +257,32 @@ int capture_thread1 (void)
     mqtt_usr_name = mxmlFindElement(xml_t,xml,"mqtt_usr_name",NULL,NULL,MXML_DESCEND);
     mqtt_usr_passwd = mxmlFindElement(xml_t,xml,"mqtt_usr_passwd",NULL,NULL,MXML_DESCEND);
     camera_ip = mxmlFindElement(xml_t,xml,"camera_ip",NULL,NULL,MXML_DESCEND);
-    address_name = mxmlFindElement(xml_t,xml,"address_name",NULL,NULL,MXML_DESCEND);
     
-    memset(config_info.address_name,mxmlGetText(address_name,NULL),sizeof(config_info.address_name));
-    memset(config_info.camera_ip,mxmlGetText(camera_ip,NULL),sizeof(config_info.camera_ip));;
-    memset(config_info.mqtt_ip,mxmlGetText(mqtt_ip,NULL),sizeof(config_info.mqtt_ip));;
-    memset(config_info.mqtt_topic,mxmlGetText(mqtt_topic,NULL),sizeof(config_info.mqtt_topic));;
-    memset(config_info.mqtt_usr_name,mxmlGetText(mqtt_usr_name,NULL),sizeof(config_info.mqtt_usr_name));;
-    memset(config_info.mqtt_usr_passwd,mxmlGetText(mqtt_usr_passwd,NULL),sizeof(config_info.mqtt_usr_passwd));;
+    xml_t  = mxmlFindElement(xml,xml,"equipment",NULL,NULL,MXML_DESCEND);
+    equip_id  = mxmlFindElement(xml_t,xml,"EquipID",NULL,NULL,MXML_DESCEND);
+    address_name = mxmlFindElement(xml_t,xml,"EquipName",NULL,NULL,MXML_DESCEND);
     
+    memcpy(config_info.address_name,mxmlGetText(address_name,NULL),sizeof(config_info.address_name));
+    memcpy(config_info.equip_id,mxmlGetText(equip_id,NULL),sizeof(config_info.equip_id));
+    memcpy(config_info.camera_ip,mxmlGetText(camera_ip,NULL),sizeof(config_info.camera_ip));;
+    memcpy(config_info.mqtt_ip,mxmlGetText(mqtt_ip,NULL),sizeof(config_info.mqtt_ip));;
+    memcpy(config_info.mqtt_topic,mxmlGetText(mqtt_topic,NULL),sizeof(config_info.mqtt_topic));;
+    memcpy(config_info.mqtt_usr_name,mxmlGetText(mqtt_usr_name,NULL),sizeof(config_info.mqtt_usr_name));;
+    memcpy(config_info.mqtt_usr_passwd,mxmlGetText(mqtt_usr_passwd,NULL),sizeof(config_info.mqtt_usr_passwd));;
+
+   
     mxmlDelete(xml);
     fclose(fp);
     
+    /*
+    printf("config_info is %s\n",config_info.address_name);
+    printf("config_info is %s\n",config_info.equip_id);
+    printf("config_info is %s\n",config_info.camera_ip);
+    printf("config_info is %s\n",config_info.mqtt_ip);
+    printf("config_info is %s\n",config_info.mqtt_topic);
+    printf("config_info is %s\n",config_info.mqtt_usr_name);
+    printf("config_info is %s\n",config_info.mqtt_usr_passwd);
+   */
 	
 	fd = open( DEVICE_NAME , O_RDONLY, 0);				
 	if (fd < 0)

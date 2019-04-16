@@ -41,16 +41,19 @@ cJSON * root;
 void pack_to_json(void)
 {
 
-   // char *time_buf;
+   time_t rawtime;
+   struct tm *info;
+   char buffer[80];
+   time( &rawtime );
+   info = localtime( &rawtime );
+   strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", info);
    
-  //  struct tm time_info;
-    //sprintf(time_buf,"%s-%s-%s  %s:%s:%s",time_info.tm_hour,time_info.tm_hour,time_info.tm_hour,time_info.tm_hour,time_info.tm_hour,time_info.tm_hour);
     root =  cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "EquipID", cJSON_CreateString("eq101000000000x"));
-    cJSON_AddItemToObject(root, "Time", cJSON_CreateString("2019-4-12 15:15:06"));
-    cJSON_AddItemToObject(root, "Position", cJSON_CreateString("香梅路莲花路智能机柜"));
+    cJSON_AddItemToObject(root, "EquipID", cJSON_CreateString(config_info.equip_id));
+    cJSON_AddItemToObject(root, "Time", cJSON_CreateString(buffer));
+    cJSON_AddItemToObject(root, "Position", cJSON_CreateString(config_info.address_name));
     cJSON_AddItemToObject(root, "sign", cJSON_CreateString("inspect"));
-    cJSON_AddItemToObject(root, "jpeg", cJSON_CreateString(json_jpeg));
+    //cJSON_AddItemToObject(root, "jpeg", cJSON_CreateString(json_jpeg));
     json_str=cJSON_Print(root);
     //printf("%s\n", cJSON_Print(root));
 }
@@ -62,18 +65,24 @@ int mqtt_thread2(void)
     MQTTClient_message pubmsg = MQTTClient_message_initializer;
     MQTTClient_deliveryToken token;
     int rc;
-
-        MQTTClient_create(&client, ADDRESS, CLIENTID , MQTTCLIENT_PERSISTENCE_NONE, NULL);
+        /*
+        MQTTClient_create(&client, config_info.mqtt_ip, CLIENTID , MQTTCLIENT_PERSISTENCE_NONE, NULL);
         conn_opts.keepAliveInterval = 200;
         conn_opts.cleansession = 1;
         conn_opts.username = USERNAME;
-        conn_opts.password= PASSWORD;
+        conn_opts.password = PASSWORD;
+        */
 while(1)
     {
         if(sem)
         {
             sem = 0;
-            
+            MQTTClient_create(&client, config_info.mqtt_ip, CLIENTID , MQTTCLIENT_PERSISTENCE_NONE, NULL);
+            conn_opts.keepAliveInterval = 200;
+            conn_opts.cleansession = 1;
+            conn_opts.username = config_info.mqtt_usr_name;
+            conn_opts.password = config_info.mqtt_usr_passwd;
+              
             if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
             {
                 printf("Failed to connect, return code %d\n", rc);
@@ -88,12 +97,12 @@ while(1)
             pubmsg.payload =  json_str;
             pubmsg.payloadlen = (int)strlen(json_str);
             printf("payloadlen is %d\r\n",pubmsg.payloadlen);
-            rc=MQTTClient_publishMessage(client, TOPIC, &pubmsg, &token);
+            rc=MQTTClient_publishMessage(client, config_info.mqtt_topic, &pubmsg, &token);
             if(rc == 0)
             printf("MQTTClient_publishMessage sucessfully\r\n");
             printf("Waiting for up to %d seconds for publication of %s\n"
                     "on topic %s for client with ClientID: %s\n",
-                    (int)(TIMEOUT/1000), PAYLOAD, TOPIC, CLIENTID);
+                    (int)(TIMEOUT/1000), PAYLOAD, config_info.mqtt_topic, CLIENTID);
             rc = MQTTClient_waitForCompletion(client, token, TIMEOUT);
             if(rc == 0)
             printf("Message with delivery token %d delivered\n", token);
