@@ -18,7 +18,7 @@
 #include "MQTTClient.h"
 #include "config.h"
 #include "cJSON.h"
-#define ADDRESS     "tcp://m2m.eclipse.org:1883"
+//#define ADDRESS     "tcp://m2m.eclipse.org:1883"
 //#define ADDRESS     "192.168.3.88:1883"
 #define ADDRESS     "193.112.87.125:1883"
 #define CLIENTID    "by_smart_cabinet"
@@ -50,7 +50,7 @@ void pack_to_json(void)
     cJSON_AddItemToObject(root, "Time", cJSON_CreateString("2019-4-12 15:15:06"));
     cJSON_AddItemToObject(root, "Position", cJSON_CreateString("香梅路莲花路智能机柜"));
     cJSON_AddItemToObject(root, "sign", cJSON_CreateString("inspect"));
-   // cJSON_AddItemToObject(root, "jpeg", cJSON_CreateString(json_jpeg));
+    cJSON_AddItemToObject(root, "jpeg", cJSON_CreateString(json_jpeg));
     json_str=cJSON_Print(root);
     //printf("%s\n", cJSON_Print(root));
 }
