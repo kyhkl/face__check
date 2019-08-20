@@ -12,15 +12,15 @@
 
 五、程序实现流程
 	1.流程 读xml配置文件配置mqtt和摄像机的ip   
-	2.读取按键 创建socket连接抓图               线程一
-	3.数据按照json格式打包                      线程一    
-	4.创建mqtt socket 连接并发布信息            线程二
-	5.发布成功语音播报                          线程二
+	2.读取按键 创建socket连接抓图              														 　线程一
+	3.数据按照json格式打包                     														 　线程一    
+	4.创建mqtt socket 连接并发布信息           														　 线程二
+	5.发布成功语音播报(该功能为包含在时间节点内)                          　　线程二
 
 六、文件夹结构
 
 	MAIN_DIR --->       ext   src  inc  conf Makefile readme lib_example git.git
-                     /   \
+                       /   \
 	SUB_DIR  --->    lib   inc
 
 七、文件结构说明 
@@ -35,4 +35,5 @@
 	还有一个隐含文件.git 是git管理文件；
 
   
-
+windows ----route add -p 192.204.20.26 MASK  255.255.255.0  192.168.0.254
+linux   ----route add -net

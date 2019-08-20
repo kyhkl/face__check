@@ -4,12 +4,12 @@
     <system-admin user="root" password="202cb962ac59075b964b07152d234b70" report_mode="0" baddot_rate="30" />
     <system-network ip="190.192.18.185" ip_mask="255.255.255.0" gateway="190.192.18.254" mac="7D:32:E9:A8:9F:B5" remote_ip="192.168.1.24" remote_port="5000" server_port="5000" timeout="3600" ip-mask="255.255.255.0" ntp_ip="190.192.1.195" />
     <hypervelocity id="capture" speed="80" speed_pass_rate="20" distance="601" retardation_offset="0" />
-    <ftp server_ip="192.168.1.188" port="6666" user="boyuan12" password="123" savepath="/home/ky/" enable="1" />
+    <ftp server_ip="192.168.3.124" port="21" user="123" password="123" savepath="da" enable="1" />
     <system-path playlist_path="/opt/playfile" />
     <equipment>
-        <Provider>01</Provider>
+        <Provider>01</Provider>r
         <EquipType>101</EquipType>
-        <EquipID>eq101000000000x</EquipID>
+        <EquipID>eq101000000001x</EquipID>
         <EquipName>香梅路莲花路智能机柜</EquipName>
         <!-- AC220 or dc48 -->
         <valtageType>AC220</valtageType>
@@ -161,4 +161,11 @@
         <door8>8</door8>
         <door9>9</door9>
     </doorID>
+    <face_check>
+        <mqtt_ip>tcp://mcloud.nas.tenbay.cn:61883</mqtt_ip>
+        <mqtt_topic>INSPECT_TOPIC</mqtt_topic>
+        <mqtt_usr_name>admin</mqtt_usr_name>
+        <mqtt_usr_passwd>admin</mqtt_usr_passwd>
+        <camera_ip>192.168.3.64</camera_ip>
+    </face_check>
 </BY-LD08>

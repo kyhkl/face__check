@@ -1,0 +1,11 @@
+RTC Test on AT91 Platform
+
+# 1. Use date command to set the current date/time
+	$: date 081812002008    //set date as 2008-08-18 12:00:00
+
+# 2. Use hwclock command to write to hardware
+	$: hwclock -w
+
+# 3. Display current date/time
+	$: date
+

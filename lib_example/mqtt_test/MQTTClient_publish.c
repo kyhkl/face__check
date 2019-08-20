@@ -18,21 +18,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include "MQTTClient.h"
-/*
-#define ADDRESS     "tcp://localhost:1883"
+
+#define ADDRESS     "tcp://m2m.eclipse.org:1883"
 #define CLIENTID    "ExampleClientPub"
 #define TOPIC       "MQTT Examples"
 #define PAYLOAD     "Hello World!"
 #define QOS         1
 #define TIMEOUT     10000L
-*/
+
+/*
 #define ADDRESS     "tcp://m2m.eclipse.org:1883"
 #define CLIENTID    "ExampleClientPub123"
 #define TOPIC       "MQTT Examples"
 #define PAYLOAD     "Hello World! can you see me?"
 #define QOS         1
 #define TIMEOUT     10000L
-
+*/
 int main(int argc, char* argv[])
 {
     MQTTClient client;

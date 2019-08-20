@@ -20,7 +20,7 @@ VERSION = 1.0.0.1
 TARGET = test.$(VERSION)
 
 $(TARGET) : $(OBJS)
-	$(CC) $^ -o $@ $(LIB_PATH) $(LIBS) 
+	$(CC) $^ -o $@ $(LIB_PATH) $(LIBS) -lpthread
 
 $(OBJS):%.o : %.c
 	$(CC) $(CFLAGS) $< -o $@ $(HEADER_PATH) -std=c99
